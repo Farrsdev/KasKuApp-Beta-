@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KasKu</string>
+    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_nav_graph">NavGraph</string>
+    <string name="title_activity_group_screen">GroupScreen</string>
+    <string name="title_activity_income_expanse_screen">IncomeExpanseScreen</string>
+    <string name="title_activity_edit_group_screen">EditGroupScreen</string>
+</resources>
