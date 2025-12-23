@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KasKu">
         <activity
+            android:name=".ui.screen.HistoryScreen"
+            android:exported="false"
+            android:label="@string/title_activity_history_screen"
+            android:theme="@style/Theme.KasKu" />
+        <activity
             android:name=".ui.screen.EditGroupScreen"
             android:exported="false"
             android:label="@string/title_activity_edit_group_screen"

@@ -5,4 +5,5 @@
     <string name="title_activity_group_screen">GroupScreen</string>
     <string name="title_activity_income_expanse_screen">IncomeExpanseScreen</string>
     <string name="title_activity_edit_group_screen">EditGroupScreen</string>
+    <string name="title_activity_history_screen">HistoryScreen</string>
 </resources>

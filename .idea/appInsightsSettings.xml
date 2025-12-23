@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.kasku" />
+                  <option name="mobileSdkAppId" value="1:367436950580:android:6d96cf190fc50be7882e61" />
+                  <option name="projectId" value="kaskuv02" />
+                  <option name="projectNumber" value="367436950580" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

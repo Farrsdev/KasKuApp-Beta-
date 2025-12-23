@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -51,17 +52,29 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
                 initialValue = emptyList()
             )
 
-    val incomeHistory = transactionDao.getIncomeHistory().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val incomeHistory: StateFlow<List<Transaction>> = _groupId
+        .filterNotNull()
+        .flatMapLatest { id ->
+            transactionDao.getIncomeHistory(id)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    val expanseHistory = transactionDao.getIncomeHistory().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val expanseHistory: StateFlow<List<Transaction>> = _groupId
+        .filterNotNull()
+        .flatMapLatest { _groupId ->
+            transactionDao.getExpanseHistory(_groupId)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private var allNames = emptyList<String>()
 
@@ -114,17 +127,6 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
     fun setGroupId(id:Int){
         viewModelScope.launch {
             _groupId.value = id
-        }
-    }
-    fun insertTransaction(transaction: Transaction) {
-        viewModelScope.launch { 
-            transactionDao.insert(transaction)
-        }
-    }
-
-    fun updateTransaction(transaction: Transaction) {
-        viewModelScope.launch {
-            transactionDao.update(transaction)
         }
     }
 

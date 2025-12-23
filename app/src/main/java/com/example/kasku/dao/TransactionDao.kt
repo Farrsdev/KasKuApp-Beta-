@@ -24,11 +24,11 @@ interface TransactionDao {
     @Query("SELECT * FROM `Transaction` WHERE groupId = :groupId ORDER BY date DESC")
     fun getAllHistory(groupId: Int) : Flow<List<Transaction>>
 
-    @Query("SELECT * FROM `Transaction` WHERE amount > 0")
-    fun getIncomeHistory() : Flow<List<Transaction>>
+    @Query("SELECT * FROM `Transaction` WHERE amount > 0 AND groupId = :groupId")
+    fun getIncomeHistory(groupId: Int) : Flow<List<Transaction>>
 
-    @Query("SELECT * FROM `Transaction` WHERE amount < 0")
-    fun getExpanseHistory() : Flow<List<Transaction>>
+    @Query("SELECT * FROM `Transaction` WHERE amount < 0 AND groupId = :groupId")
+    fun getExpanseHistory(groupId: Int) : Flow<List<Transaction>>
 
     @Insert
     suspend fun insert(transaction: Transaction)

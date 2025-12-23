@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,8 +36,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +47,7 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -83,7 +87,8 @@ fun HomeGroupUi(
     vm: GroupViewModel = viewModel(),
     transactionVm: TransactionViewModel = viewModel(),
     onBackToHome: () -> Unit,
-    onGoToIncExp: (Boolean) -> Unit = {}
+    onGoToIncExp: (Boolean) -> Unit = {},
+    onNavigateToDetailHistory: (Int) -> Unit = {},
 ) {
     val group by vm.group.collectAsState()
     val totalKas by transactionVm.totalMoney.collectAsState()
@@ -142,35 +147,35 @@ fun HomeGroupUi(
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet(
-                    modifier = Modifier.width(300.dp)
+                    modifier = Modifier.width(280.dp)
                 ) {
                     // Drawer Header
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(primaryColor)
-                            .padding(vertical = 32.dp, horizontal = 20.dp),
+                            .padding(vertical = 24.dp, horizontal = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(80.dp)
+                                .size(64.dp)
                                 .clip(CircleShape)
                                 .background(Color.White)
-                                .padding(16.dp),
+                                .padding(12.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 Icons.Default.AttachMoney,
                                 contentDescription = "Group",
-                                modifier = Modifier.size(40.dp),
+                                modifier = Modifier.size(32.dp),
                                 tint = primaryColor
                             )
                         }
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(12.dp))
                         Text(
                             text = group!!.name,
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             textAlign = TextAlign.Center,
@@ -178,97 +183,184 @@ fun HomeGroupUi(
                         )
                         Text(
                             text = "Kelola Keuangan",
-                            fontSize = 14.sp,
+                            fontSize = 12.sp,
                             color = Color.White.copy(alpha = 0.9f)
                         )
                     }
 
-                    // Action Buttons
+                    // Navigation Items - seperti menu biasa
                     Column(
-                        modifier = Modifier.padding(20.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
                     ) {
-                        Button(
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                onGoToIncExp(true)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF4CAF50),
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                        // Item untuk mencatat pemasukan
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch { drawerState.close() }
+                                    onGoToIncExp(true)
+                                }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFE8F5E9)),
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     Icons.Default.Add,
                                     contentDescription = "Income",
+                                    tint = Color(0xFF2E7D32),
                                     modifier = Modifier.size(20.dp)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Catat Pemasukan")
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    "Catat Pemasukan",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    "Tambah pemasukan kas",
+                                    fontSize = 12.sp,
+                                    color = Color.Gray
+                                )
                             }
                         }
 
-                        Button(
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                onGoToIncExp(false)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFF44336),
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch { drawerState.close() }
+                                    onGoToIncExp(false)
+                                }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFFEBEE)),
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     Icons.Default.Remove,
                                     contentDescription = "Expense",
+                                    tint = Color(0xFFC62828),
                                     modifier = Modifier.size(20.dp)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Catat Pengeluaran")
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    "Catat Pengeluaran",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    "Tambah pengeluaran kas",
+                                    fontSize = 12.sp,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch { drawerState.close() }
+                                    onNavigateToDetailHistory(groupId)
+                                }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFE3F2FD)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.History,
+                                    contentDescription = "History",
+                                    tint = Color(0xFF1976D2),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    "Detail History",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    "Lihat semua transaksi",
+                                    fontSize = 12.sp,
+                                    color = Color.Gray
+                                )
                             }
                         }
 
                         Divider(
-                            modifier = Modifier.padding(vertical = 16.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(vertical = 8.dp),
+                            thickness = 0.5.dp,
                             color = Color.LightGray.copy(alpha = 0.3f)
                         )
 
-                        // Navigation Items
-                        Button(
-                            onClick = { onBackToHome() },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = Color.Gray
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                        // Item untuk kembali ke home
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch { drawerState.close() }
+                                    onBackToHome()
+                                }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Start
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFF5F5F5)),
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "Back",
+                                    tint = Color.Gray,
                                     modifier = Modifier.size(20.dp)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Kembali ke Home")
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    "Kembali ke Home",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    "Ke halaman utama",
+                                    fontSize = 12.sp,
+                                    color = Color.Gray
+                                )
                             }
                         }
                     }
@@ -332,7 +424,6 @@ fun HomeGroupUi(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Total Balance Card
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
@@ -371,12 +462,10 @@ fun HomeGroupUi(
                             }
                         }
 
-                        // Income & Expense Row
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            // Income Card
                             Card(
                                 modifier = Modifier.weight(1f),
                                 colors = CardDefaults.cardColors(
@@ -469,6 +558,7 @@ fun HomeGroupUi(
                         }
                     }
 
+
                     Card(
                         modifier = Modifier
                             .fillMaxSize()
@@ -486,28 +576,48 @@ fun HomeGroupUi(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 20.dp, vertical = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Icon(
-                                    Icons.Default.History,
-                                    contentDescription = "History",
-                                    tint = Color(0xFF08B333),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(Modifier.width(12.dp))
-                                Text(
-                                    text = "AKTIVITAS TERBARU",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.Black
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.History,
+                                        contentDescription = "History",
+                                        tint = Color(0xFF08B333),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(Modifier.width(12.dp))
+                                    Text(
+                                        text = "AKTIVITAS TERBARU",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color.Black
+                                    )
+                                }
+
+                                if (history.isNotEmpty()) {
+                                    TextButton(
+                                        onClick = {
+                                            onNavigateToDetailHistory(groupId)
+                                        },
+                                        modifier = Modifier.padding(start = 8.dp)
+                                    ) {
+                                        Text(
+                                            "Lihat Semua",
+                                            fontSize = 12.sp,
+                                            color = Color(0xFF08B333),
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
+                                }
                             }
 
                             Divider(
                                 color = Color.LightGray.copy(alpha = 0.3f)
                             )
 
-                            // Transaction List
                             if (history.isEmpty()) {
                                 Column(
                                     modifier = Modifier
@@ -540,18 +650,50 @@ fun HomeGroupUi(
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(horizontal = 16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(1.dp)
+                                        .padding(horizontal = 12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(2.dp)
                                 ) {
                                     items(history.take(10)) { transaction ->
                                         TransactionItem(transaction = transaction)
+                                    }
+
+                                    item {
+                                        if (history.size > 15) {
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 12.dp),
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                Text(
+                                                    "Menampilkan 10 dari ${history.size} transaksi",
+                                                    fontSize = 12.sp,
+                                                    color = Color.Gray,
+                                                    modifier = Modifier.padding(bottom = 8.dp)
+                                                )
+                                                Button(
+                                                    onClick = {
+                                                        onNavigateToDetailHistory(groupId)
+                                                    },
+                                                    colors = ButtonDefaults.buttonColors(
+                                                        containerColor = Color(0xFF08B333),
+                                                        contentColor = Color.White
+                                                    ),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 32.dp),
+                                                    shape = RoundedCornerShape(12.dp)
+                                                ) {
+                                                    Text("Lihat Semua Transaksi")
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    // Footer Hint
                     Text(
                         text = "Buka menu untuk mencatat transaksi",
                         modifier = Modifier
@@ -572,7 +714,7 @@ fun TransactionItem(transaction: Transaction) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 8.dp),
+            .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -581,10 +723,10 @@ fun TransactionItem(transaction: Transaction) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(36.dp) // Reduced size from 44.dp to 36.dp
                     .background(
                         color = if (transaction.amount > 0) Color(0xFFE8F5E9) else Color(0xFFFFEBEE),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -592,23 +734,23 @@ fun TransactionItem(transaction: Transaction) {
                     imageVector = if (transaction.amount > 0) Icons.Default.TrendingUp else Icons.Default.TrendingDown,
                     contentDescription = null,
                     tint = if (transaction.amount > 0) Color(0xFF2E7D32) else Color(0xFFC62828),
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp)) // Reduced spacing
 
             Column {
                 Text(
                     transaction.description ?: if (transaction.amount > 0) "Pemasukan" else "Pengeluaran",
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black,
                     maxLines = 1
                 )
                 Text(
                     formatDate(transaction.date),
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     color = Color.Gray
                 )
             }
@@ -619,15 +761,15 @@ fun TransactionItem(transaction: Transaction) {
         ) {
             Text(
                 formatCurrency(abs(transaction.amount)),
-                fontSize = 16.sp,
+                fontSize = 14.sp, // Reduced font size
                 fontWeight = FontWeight.SemiBold,
                 color = if (transaction.amount > 0) Color(0xFF2E7D32) else Color(0xFFC62828)
             )
             Text(
                 if (transaction.amount > 0) "Pemasukan" else "Pengeluaran",
-                fontSize = 11.sp,
+                fontSize = 10.sp, // Reduced font size
                 color = Color.Gray,
-                modifier = Modifier.padding(top = 2.dp)
+                modifier = Modifier.padding(top = 1.dp) // Reduced padding
             )
         }
     }

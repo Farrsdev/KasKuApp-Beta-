@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.kasku.ui.screen.EditGroupUi
+import com.example.kasku.ui.screen.HistoryUI
 import com.example.kasku.ui.screen.HomeGroupUi
 import com.example.kasku.ui.screen.HomeUi
 import com.example.kasku.ui.screen.IncomeExpanseUi
@@ -54,6 +55,9 @@ fun NavGraph(nc: NavHostController) {
                     onGoToIncExp = {isIncome ->
                         val flag = if(isIncome) 1 else 0
                         nc.navigate("income_expanse/$groupId/$flag")
+                    },
+                    onNavigateToDetailHistory = { id ->
+                        nc.navigate("group_history/$id")
                     }
                 )
             }
@@ -90,6 +94,17 @@ fun NavGraph(nc: NavHostController) {
                     vm = groupViewModel
                 )
             }
+        }
+
+        composable("group_history/{groupId}") { bse ->
+            val groupId = bse.arguments?.getString("groupId")?.toIntOrNull()
+
+            HistoryUI(
+                groupId = groupId!!,
+                onBack = {
+                    nc.popBackStack()
+                }
+            )
         }
     }
 
